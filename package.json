@@ -15,10 +15,11 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "build:web": "vite build",
-    "build": "npm run typecheck && npm run lint && npm run test && npm run build:web && wrangler deploy --dry-run --outdir .wrangler/dry",
+    "build": "npm run typecheck && npm run lint && npm run test && wrangler deploy --dry-run --outdir .wrangler/dry && node scripts/check-bundle.mjs",
     "verify": "npm run build && npm run test:e2e",
     "deploy": "npm run build && wrangler deploy",
-    "release": "npm run verify && wrangler deploy"
+    "release": "npm run verify && wrangler deploy",
+    "pretest": "vite build --logLevel error"
   },
   "cloudflare": {
     "label": "amplifi Quotes",
@@ -45,7 +46,7 @@
     "@simplewebauthn/browser": "14.0.0",
     "@simplewebauthn/server": "14.0.3",
     "decimal.js-light": "2.5.1",
-    "fflate": "0.8.2",
+    "fflate": "0.8.3",
     "hono": "4.13.13",
     "pdfmake": "0.3.12",
     "react": "19.1.10",

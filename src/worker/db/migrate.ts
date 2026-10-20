@@ -1,11 +1,13 @@
 import { m0001 } from './migrations/0001_init';
 import { m0002 } from './migrations/0002_auth';
-import { m0003 } from './migrations/0003_data';
+import { m0003 } from './migrations/0003_workspace';
 import { m0004 } from './migrations/0004_quotes';
 import { m0005 } from './migrations/0005_comms';
 import { m0006 } from './migrations/0006_integrations';
 import { m0007 } from './migrations/0007_hosted';
-import { m0008 } from './migrations/0008_reserved';
+import { m0008 } from './migrations/0008_pricing';
+import { m0009 } from './migrations/0009_platform';
+import { m0010 } from './migrations/0010_reserved';
 import type { Db } from './sql';
 
 export interface Migration {
@@ -19,7 +21,7 @@ export interface Migration {
  * Forward-only, in order. Each workstream owns one slot file; add statements there instead of
  * creating new files, so version numbers stay stable across parallel branches.
  */
-export const MIGRATIONS: Migration[] = [m0001, m0002, m0003, m0004, m0005, m0006, m0007, m0008];
+export const MIGRATIONS: Migration[] = [m0001, m0002, m0003, m0004, m0005, m0006, m0007, m0008, m0009, m0010];
 export const LATEST_SCHEMA = MIGRATIONS[MIGRATIONS.length - 1]!.version;
 
 export interface MigrateResult {

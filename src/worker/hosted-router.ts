@@ -1,5 +1,5 @@
 import type { Env } from './env';
-import { forward, workspaceStub } from './index';
+import { forward, workspaceStub } from './routing';
 
 /**
  * Hosted edition routing (HST-1, HST-5). Resolves the hostname to a workspace through the directory,

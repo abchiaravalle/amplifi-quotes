@@ -1,0 +1,38 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Build gate (typecheck, lint, every test, dry-run deploy, bundle checks)
+        run: npm run build
+      - name: Requirement coverage
+        run: node scripts/check-req-coverage.mjs
+      - name: Dependency audit (high and critical fail the build, SEC-12)
+        run: npm audit --omit=dev --audit-level=high
+      - name: License check (no GPL or AGPL, SEC-12)
+        run: node scripts/check-licenses.mjs
+      - name: Install browsers
+        run: npx playwright install --with-deps chromium webkit firefox
+      - name: End-to-end tests (TST-5, TST-11, TST-12)
+        run: npm run test:e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report

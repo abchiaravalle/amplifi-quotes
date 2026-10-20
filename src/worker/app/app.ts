@@ -58,7 +58,7 @@ export function buildApp(ws: WsCtx): Hono<AppEnv> {
   // DEP-5: until setup is complete, only setup + health routes work.
   app.use('/api/*', async (c, next) => {
     const p = c.req.path;
-    const open = p === '/api/health' || p.startsWith('/api/setup');
+    const open = p === '/api/health' || p.startsWith('/api/setup') || p.startsWith('/api/test/');
     if (!open && !ws.settings.get('workspace.setupComplete')) {
       throw new ApiError(503, 'setup_required', 'Finish setup first');
     }

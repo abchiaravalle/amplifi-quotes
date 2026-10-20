@@ -7,6 +7,7 @@ import type { Jobs } from '../services/jobs';
 import type { Live } from '../services/live';
 import type { Outbound } from '../services/outbound';
 import type { Outbox } from '../services/outbox';
+import type { RpcRegistry, Services } from '../services/registry';
 import type { Settings } from '../services/settings';
 import type { Audit } from './audit';
 import type { RateLimiter } from './ratelimit';
@@ -49,6 +50,8 @@ export interface WsCtx {
   http: Outbound;
   limiter: RateLimiter;
   events: Events;
+  services: Services;
+  rpc: RpcRegistry;
   /** true when the database schema is newer than the code (UPD-5) */
   readOnly: boolean;
   /** today's date (YYYY-MM-DD) in the workspace time zone */

@@ -92,6 +92,24 @@ Don't open browsers, play sound, or start apps with windows on this Mac.
 - Requirement coverage: `node scripts/check-req-coverage.mjs --ids=AUTH-1,AUTH-2,...` must print OK
   for your IDs before you report done.
 
+## End-to-end tests (browser)
+
+- `npm run test:e2e` runs Playwright (Chromium, WebKit, Firefox, plus a phone profile for files named
+  `*mobile.spec.ts`) against `wrangler dev` of the real build with fresh state. Headless only.
+- Sign in from a browser test with `signInAs(request, context, role)` from `e2e/helpers.ts`. It uses
+  `/api/test/sign-in`, which exists only when `E2E_SECRET` is set (never in a real deployment).
+- `npm run verify` = `npm run build` + `npm run test:e2e`. Frontend workstreams must pass `verify`.
+
+## Pitfalls already hit (don't repeat)
+
+- The Worker main module (`src/worker/index.ts`) may export ONLY the default handler and the Durable
+  Object classes. Any other named export makes workerd refuse to start. Shared helpers go in
+  `src/worker/routing.ts`. A unit test enforces this.
+- Asset requests for `/x.html` redirect to `/x`. Fetch `/x` from `env.ASSETS`.
+- In Python scripts, never `open(p,'w').write(open(p).read()...)` on one line: the write opens (and
+  empties) the file before the read. Read into a variable first.
+- `npm install` warns about install scripts; approve with `npm install-scripts approve <pkg>`.
+
 ## Git
 
 - Work only in your worktree on your branch. Commit early and often with clear messages.

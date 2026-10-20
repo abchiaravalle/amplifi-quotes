@@ -13,6 +13,7 @@ import { Jobs } from './services/jobs';
 import { Live } from './services/live';
 import { Outbound } from './services/outbound';
 import { Outbox } from './services/outbox';
+import { RpcRegistry, Services } from './services/registry';
 import { Settings } from './services/settings';
 
 /** Test hook: tests can replace the clock and the outbound fetch on a live instance. */
@@ -55,6 +56,8 @@ export class WorkspaceDO extends DurableObject<Env> {
       http,
       limiter: new RateLimiter(db, clock),
       events: new Events(),
+      services: new Services(),
+      rpc: new RpcRegistry(),
       get readOnly() {
         return readOnly;
       },
@@ -116,6 +119,11 @@ export class WorkspaceDO extends DurableObject<Env> {
     this.ws.db.resetCounters();
   }
 
+  /** Module RPC entry point (hosted sign-up, staff console, directory callbacks). */
+  async rpc(name: string, args: unknown): Promise<unknown> {
+    return this.ws.rpc.call(name, args);
+  }
+
   // ---- test hooks (RPC). Harmless in production: they only affect this instance's memory. ----
   testSetNow(ms: number | null): void {
     this.nowOverride = ms;
@@ -153,6 +161,9 @@ export class WorkspaceDO extends DurableObject<Env> {
   }
   testSql(query: string, ...params: (string | number | null)[]): Record<string, unknown>[] {
     return this.ws.db.all(query, ...params);
+  }
+  testEvents(): { name: string; payload: unknown }[] {
+    return [...this.ws.events.recent];
   }
   testCtx(): WsCtx {
     return this.ws;

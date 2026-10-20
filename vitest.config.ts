@@ -25,6 +25,19 @@ export default defineConfig({
         },
       },
       {
+        test: {
+          name: 'web',
+          include: ['tests/web/**/*.test.tsx', 'tests/web/**/*.test.ts'],
+          environment: 'jsdom',
+        },
+        resolve: {
+          alias: {
+            '@engine': new URL('./src/engine', import.meta.url).pathname,
+            '@shared': new URL('./src/shared', import.meta.url).pathname,
+          },
+        },
+      },
+      {
         plugins: [
           cloudflareTest({
             wrangler: { configPath: './wrangler.jsonc' },
@@ -34,7 +47,6 @@ export default defineConfig({
                 INTEGRATION_KEY: 'test-integration-key',
                 HOSTED_BASE_DOMAIN: 'quotes.test',
               },
-              assets: { directory: './tests/fixtures/assets', binding: 'ASSETS' },
             },
           }),
         ],

@@ -1,47 +1,19 @@
-import { type Env, INTERNAL_HEADERS } from './env';
+import type { Env } from './env';
 import { hostedRouter } from './hosted-router';
+import {
+  customerPageHook,
+  forward,
+  isAppPath,
+  SELF_WORKSPACE_NAME,
+  withSecurityHeaders,
+  workspaceStub,
+} from './routing';
 
 export { DirectoryDO } from './directory-do';
 export { WorkspaceDO } from './workspace-do';
 
-/** Paths the Worker handles itself; everything else is a static asset (SPA fallback). */
-function isAppPath(p: string): boolean {
-  return p.startsWith('/api/') || p === '/ws' || p.startsWith('/widget/') || p === '/robots.txt';
-}
-
-/** The self-deployed edition has exactly one workspace. */
-export const SELF_WORKSPACE_NAME = 'workspace';
-
-export function workspaceStub(env: Env, name: string, jurisdiction?: string): DurableObjectStub {
-  const ns = jurisdiction === 'eu' ? env.WORKSPACE.jurisdiction('eu') : env.WORKSPACE;
-  return ns.get(ns.idFromName(name));
-}
-
-/** Forward a request to a workspace DO with trusted internal headers (client copies stripped). */
-export function forward(request: Request, stub: DurableObjectStub, workspaceId: string): Promise<Response> {
-  const url = new URL(request.url);
-  const headers = new Headers(request.headers);
-  for (const h of Object.values(INTERNAL_HEADERS)) headers.delete(h);
-  headers.set(INTERNAL_HEADERS.ip, request.headers.get('cf-connecting-ip') ?? '');
-  const cf = (request as Request & { cf?: { country?: string } }).cf;
-  headers.set(INTERNAL_HEADERS.country, cf?.country ?? '');
-  headers.set(INTERNAL_HEADERS.workspace, workspaceId);
-  headers.set(INTERNAL_HEADERS.host, url.host);
-  return stub.fetch(new Request(request, { headers }));
-}
-
-export function withSecurityHeaders(res: Response, path: string): Response {
-  const r = new Response(res.body, res);
-  // WebSocket upgrade responses must pass through untouched
-  if (res.status === 101) return res;
-  r.headers.set('x-content-type-options', 'nosniff');
-  r.headers.set('referrer-policy', 'strict-origin-when-cross-origin');
-  if (path.startsWith('/api/')) {
-    r.headers.set('cache-control', r.headers.get('cache-control') ?? 'no-store');
-    if (path.startsWith('/api/public/')) r.headers.set('x-robots-tag', 'noindex, nofollow');
-  }
-  return r;
-}
+// Only the default handler and Durable Object classes may be exported from the main module
+// (workerd rejects other named exports). Shared helpers live in ./routing.ts.
 
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
@@ -52,6 +24,19 @@ export default {
       return new Response('User-agent: *\nDisallow: /q/\nDisallow: /api/\n', {
         headers: { 'content-type': 'text/plain', 'cache-control': 'public, max-age=3600' },
       });
+    }
+
+    if (path.startsWith('/q/')) {
+      // Customer quote page: its own small entry (CV-3). The quotes module may rewrite meta tags (CV-14).
+      // '/q' (not '/q.html'): asset html_handling redirects '/q.html' -> '/q', which would skip these headers.
+      const page = await env.ASSETS.fetch(
+        new Request(new URL('/q', url), { method: 'GET', headers: request.headers, redirect: 'manual' }),
+      );
+      const res = await customerPageHook(request, env, page);
+      const out = new Response(res.body, res);
+      out.headers.set('x-robots-tag', 'noindex, nofollow');
+      out.headers.set('cache-control', 'no-store');
+      return out;
     }
 
     if (!isAppPath(path)) return env.ASSETS.fetch(request);

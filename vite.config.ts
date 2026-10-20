@@ -15,6 +15,10 @@ export default defineConfig({
     emptyOutDir: true,
     sourcemap: true,
     rollupOptions: {
+      input: {
+        app: new URL('./src/web/index.html', import.meta.url).pathname,
+        q: new URL('./src/web/q.html', import.meta.url).pathname,
+      },
       output: {
         manualChunks: {
           pdf: ['pdfmake'],

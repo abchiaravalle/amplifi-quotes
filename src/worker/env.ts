@@ -25,6 +25,8 @@ export interface Env {
   AI?: Ai;
   /** Test-only: fixed clock (ms) and outbound mock switch. Never set in production. */
   TEST_NOW?: string;
+  /** e2e only: enables /api/test/* when set. Never set in production (TST-5). */
+  E2E_SECRET?: string;
 }
 
 /** Headers the Worker sets for the Durable Object. The Worker strips any client-sent copies. */

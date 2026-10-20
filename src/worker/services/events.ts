@@ -57,6 +57,8 @@ type Handler<K extends EventName> = (payload: EventMap[K]) => void;
 
 export class Events {
   private subs = new Map<EventName, Handler<EventName>[]>();
+  /** Last 200 emitted events, newest last. Memory only; used by tests (testEvents RPC). */
+  readonly recent: { name: EventName; payload: unknown }[] = [];
 
   on<K extends EventName>(name: K, handler: Handler<K>): void {
     const list = this.subs.get(name) ?? [];
@@ -65,6 +67,8 @@ export class Events {
   }
 
   emit<K extends EventName>(name: K, payload: EventMap[K]): void {
+    this.recent.push({ name, payload });
+    if (this.recent.length > 200) this.recent.shift();
     for (const h of this.subs.get(name) ?? []) h(payload as EventMap[EventName]);
   }
 }

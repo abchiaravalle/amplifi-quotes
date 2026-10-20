@@ -15,16 +15,18 @@ export interface Module {
 
 import { authModule } from './auth';
 import { commsModule } from './comms';
-import { dataModule } from './data';
 import { hostedModule } from './hosted';
 import { integrationsModule } from './integrations';
 import { platformModule } from './platform';
+import { pricingModule } from './pricing';
 import { quotesModule } from './quotes';
+import { workspaceModule } from './workspace';
 
 export const MODULES: Module[] = [
   platformModule,
   authModule,
-  dataModule,
+  workspaceModule,
+  pricingModule,
   quotesModule,
   commsModule,
   integrationsModule,

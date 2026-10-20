@@ -1,5 +1,5 @@
 import { env, exports } from 'cloudflare:workers';
-import { SELF_WORKSPACE_NAME } from '../../src/worker/index';
+import { SELF_WORKSPACE_NAME } from '../../src/worker/routing';
 import type { WorkspaceDO } from '../../src/worker/workspace-do';
 
 /**
@@ -103,4 +103,10 @@ export async function mockFetch(
 
 export async function outboundCalls() {
   return stub().testOutboundCalls();
+}
+
+/** Domain events emitted inside the workspace DO since it started (newest last). */
+export async function events(name?: string): Promise<{ name: string; payload: any }[]> {
+  const all = (await stub().testEvents()) as { name: string; payload: any }[];
+  return name ? all.filter((e) => e.name === name) : all;
 }
