@@ -22,6 +22,17 @@ _Screens land here as each part of the app is built. They're captured by the tes
 (`npm run screenshots`), not mocked up._
 <!-- screenshots:end -->
 
+### The specification
+
+<p>
+<a href="docs/amplifi-Quotes-Spec-v0.1.pdf"><img src="docs/images/spec-summary.png" width="380" alt="Spec, summary and goals"></a>
+<a href="docs/amplifi-Quotes-Spec-v0.1.pdf"><img src="docs/images/spec-pricing-engine.png" width="380" alt="Spec, pricing engine requirements"></a>
+</p>
+<p>
+<a href="docs/amplifi-Quotes-Spec-v0.1.pdf"><img src="docs/images/spec-template-example.png" width="380" alt="Spec, quote template example"></a>
+<a href="docs/amplifi-Quotes-Spec-v0.1.pdf"><img src="docs/images/spec-permissions.png" width="380" alt="Spec, permissions by role"></a>
+</p>
+
 ## Two ways to run it
 
 | | Self-deployed | Hosted by amplifi |
