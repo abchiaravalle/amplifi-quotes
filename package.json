@@ -19,7 +19,8 @@
     "verify": "npm run build && npm run test:e2e",
     "deploy": "npm run build && wrangler deploy",
     "release": "npm run verify && wrangler deploy",
-    "pretest": "vite build --logLevel error"
+    "pretest": "vite build --logLevel error",
+    "screenshots": "SCREENSHOTS=1 playwright test e2e/screenshots.spec.ts --project=chromium --project=mobile"
   },
   "cloudflare": {
     "label": "amplifi Quotes",
@@ -80,5 +81,9 @@
     "esbuild@0.28.2": true,
     "workerd@1.20260815.1": true,
     "workerd@1.20261019.1": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/abchiaravalle/amplifi-quotes"
   }
 }

@@ -128,7 +128,7 @@ The self-deployed edition has no telemetry, so its usage isn't measured. GitHub 
 | ID | Default |
 |---|---|
 | D-1 | License: Elastic License 2.0. Free to use, change, and self-deploy; not allowed to offer as a hosted service |
-| D-2 | Repo: `github.com/abchiaravalle/amplifi-quotes`, private through P0 and P1, public at v1.0 |
+| D-2 | Repo: `github.com/abchiaravalle/amplifi-quotes`, public from October 20, 2026 |
 | D-3 | Product name: amplifi Quotes, pending a trademark check |
 | D-4 | Self-deployed copies get every feature; hosted plans charge for hosting, domains, email, backups, and support |
 | D-5 | Hosted plans and prices as in section 10 |

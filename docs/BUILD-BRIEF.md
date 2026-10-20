@@ -21,8 +21,8 @@ npx vitest run tests/worker/your-file.test.ts   # one file
 npm run build         # the gate. Must pass.
 ```
 
-No `npm run dev` or any server/watch command: the tool runner blocks long-lived processes. Use tests.
-Don't open browsers, play sound, or start apps with windows on this Mac.
+Builders run headless: no `npm run dev` or other long-lived server/watch commands (use tests), and no
+browser windows or sound. Playwright runs headless.
 
 ## Architecture you must follow (don't redesign)
 

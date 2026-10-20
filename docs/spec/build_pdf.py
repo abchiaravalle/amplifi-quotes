@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
-"""Build SPEC.md from docs/spec/0*.md and render it on the amplifi letterhead.
+"""Build SPEC.md from docs/spec/0*.md and render the spec PDF.
 
 Usage: python3 docs/spec/build_pdf.py [out.pdf]
-Needs: pandoc, and the amplifi-pdf-templates skill renderer (render_pdf.py).
+Needs: pandoc. Set AQ_PDF_RENDERER to a letterhead renderer (render_pdf.py <fragment.html> <out.pdf>);
+without it, the PDF renders with weasyprint and plain styling.
 """
 import glob, os, re, subprocess, sys, html
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 SPEC_DIR = os.path.join(ROOT, "docs", "spec")
-OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, "amplifi-Quotes-Spec-v0.1.pdf")
-RENDER = os.path.expanduser("~/.hermes/skills/productivity/amplifi-pdf-templates/scripts/render_pdf.py")
+OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, "docs", "amplifi-Quotes-Spec-v0.1.pdf")
+RENDER = os.environ.get("AQ_PDF_RENDERER", "")
 
 parts = sorted(glob.glob(os.path.join(SPEC_DIR, "0*.md")))
 md = "\n\n".join(open(p, encoding="utf-8").read().rstrip() for p in parts) + "\n"
@@ -65,7 +66,7 @@ table.amp-table.amp-wrap-last td:last-child {{ white-space:normal; }}
   <img class="amp-rh-logo" src="{{{{LOGO_DARK}}}}" alt="amplifi.studio">
   <span class="amp-rh-doc">Product Specification · amplifi Quotes</span>
 </div>
-<span class="amp-confidential-source">Confidential, ACWebDev, LLC</span>
+<span class="amp-confidential-source">ACWebDev, LLC</span>
 
 <div class="amp-masthead">
   <img class="amp-logo" src="{{{{LOGO_WHITE}}}}" alt="amplifi.studio">
@@ -91,6 +92,11 @@ table.amp-table.amp-wrap-last td:last-child {{ white-space:normal; }}
 frag = frag.replace("\u2014", ", ").replace("\u2013", "-")
 fp = os.path.join("/tmp", "amplifi-quotes-spec-fragment.html")
 open(fp, "w", encoding="utf-8").write(frag)
-subprocess.run([sys.executable if os.path.exists(sys.executable) else "python3", RENDER, fp, OUT,
-                "--title", "amplifi Quotes · Product Specification"], check=True)
+if RENDER and os.path.exists(RENDER):
+    subprocess.run([sys.executable, RENDER, fp, OUT, "--title", "amplifi Quotes · Product Specification"], check=True)
+else:
+    plain = os.path.join("/tmp", "amplifi-quotes-spec-plain.html")
+    css = "body{font-family:-apple-system,Helvetica,Arial,sans-serif;font-size:9.5pt;line-height:1.45}table{border-collapse:collapse;width:100%}th,td{border:1px solid #ddd;padding:3pt 5pt;vertical-align:top}"
+    open(plain, "w", encoding="utf-8").write(f"<html><head><meta charset=utf-8><style>{css}</style></head><body>{frag}</body></html>")
+    subprocess.run(["weasyprint", plain, OUT], check=True)
 print("PDF:", OUT)
