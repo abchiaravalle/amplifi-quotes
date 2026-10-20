@@ -1,0 +1,83 @@
+{
+  "name": "amplifi-quotes",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Quoting for service businesses, on Cloudflare Workers.",
+  "license": "Elastic-2.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "npm run build:web && wrangler dev --local",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "biome check .",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "build:web": "vite build",
+    "build": "npm run typecheck && npm run lint && npm run test && npm run build:web && wrangler deploy --dry-run --outdir .wrangler/dry",
+    "verify": "npm run build && npm run test:e2e",
+    "deploy": "npm run build && wrangler deploy",
+    "release": "npm run verify && wrangler deploy"
+  },
+  "cloudflare": {
+    "label": "amplifi Quotes",
+    "products": [
+      "Workers",
+      "Durable Objects"
+    ],
+    "bindings": {
+      "SETUP_CODE": {
+        "description": "A code you make up (12+ characters). You'll type it on first visit to claim the owner account. Keep it somewhere safe."
+      },
+      "RESEND_API_KEY": {
+        "description": "Optional. A [Resend](https://resend.com) API key so the app can send email. Leave blank to send quotes from your own email app."
+      },
+      "SMTP2GO_API_KEY": {
+        "description": "Optional. An [SMTP2GO](https://www.smtp2go.com) API key, as an alternative to Resend."
+      },
+      "INTEGRATION_KEY": {
+        "description": "Optional. A random string used to encrypt integration secrets. Generate one with `openssl rand -hex 32`."
+      }
+    }
+  },
+  "dependencies": {
+    "@simplewebauthn/browser": "14.0.0",
+    "@simplewebauthn/server": "14.0.3",
+    "decimal.js-light": "2.5.1",
+    "fflate": "0.8.2",
+    "hono": "4.13.13",
+    "pdfmake": "0.3.12",
+    "react": "19.1.10",
+    "react-dom": "19.1.10",
+    "react-router-dom": "7.18.4",
+    "xss": "1.0.15",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "@biomejs/biome": "2.5.15",
+    "@cloudflare/vitest-plugin": "1.4.6",
+    "@cloudflare/workers-types": "5.20261019.1",
+    "@playwright/test": "1.64.1",
+    "@testing-library/dom": "10.4.2",
+    "@testing-library/react": "16.3.3",
+    "@types/node": "26.6.5",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "5.2.0",
+    "@vitest/coverage-v8": "4.1.12",
+    "fast-check": "4.10.2",
+    "jsdom": "30.1.3",
+    "typescript": "5.9.3",
+    "vite": "7.3.7",
+    "vitest": "4.1.12",
+    "wrangler": "4.151.3"
+  },
+  "allowScripts": {
+    "esbuild@0.28.1": true,
+    "esbuild@0.28.2": true,
+    "workerd@1.20260815.1": true,
+    "workerd@1.20261019.1": true
+  }
+}

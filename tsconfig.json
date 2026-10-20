@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "ES2023",
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "exactOptionalPropertyTypes": false,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+    "allowImportingTsExtensions": false,
+    "noEmit": true,
+    "types": ["@cloudflare/workers-types", "@cloudflare/vitest-plugin/types", "node"],
+    "baseUrl": ".",
+    "paths": { "@engine/*": ["src/engine/*"], "@shared/*": ["src/shared/*"] }
+  },
+  "include": ["src", "tests", "e2e", "scripts", "*.ts"],
+  "exclude": ["node_modules", "dist", ".wrangler", "tools/private"]
+}

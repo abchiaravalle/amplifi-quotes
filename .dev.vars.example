@@ -1,0 +1,5 @@
+# Copy to .dev.vars for local development. On Cloudflare these are Worker secrets.
+SETUP_CODE=change-me-to-something-long
+RESEND_API_KEY=
+SMTP2GO_API_KEY=
+INTEGRATION_KEY=
