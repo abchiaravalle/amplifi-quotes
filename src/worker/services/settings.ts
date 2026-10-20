@@ -48,6 +48,22 @@ export interface SettingsShape {
   'ai.enabled': boolean;
   'ai.monthlyCap': number;
   'chat.webhooks': { slack?: string; teams?: string; events: string[] };
+
+  // ---- auth workstream adds entries below this line ----
+
+  // ---- workspace workstream adds entries below this line ----
+
+  // ---- pricing workstream adds entries below this line ----
+
+  // ---- quotes workstream adds entries below this line ----
+
+  // ---- comms workstream adds entries below this line ----
+
+  // ---- integrations workstream adds entries below this line ----
+
+  // ---- hosted workstream adds entries below this line ----
+
+  // ---- platform workstream adds entries below this line ----
 }
 
 export const DEFAULT_SETTINGS: SettingsShape = {
@@ -88,6 +104,22 @@ export const DEFAULT_SETTINGS: SettingsShape = {
   'ai.enabled': false,
   'ai.monthlyCap': 200,
   'chat.webhooks': { events: [] },
+
+  // ---- auth workstream adds entries below this line ----
+
+  // ---- workspace workstream adds entries below this line ----
+
+  // ---- pricing workstream adds entries below this line ----
+
+  // ---- quotes workstream adds entries below this line ----
+
+  // ---- comms workstream adds entries below this line ----
+
+  // ---- integrations workstream adds entries below this line ----
+
+  // ---- hosted workstream adds entries below this line ----
+
+  // ---- platform workstream adds entries below this line ----
 };
 
 export type SettingKey = keyof SettingsShape;

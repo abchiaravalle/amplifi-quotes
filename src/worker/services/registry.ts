@@ -73,6 +73,22 @@ export interface ServiceMap {
   }) => string | null;
   /** quotes: build the customer-facing document for a quote's current sent revision */
   'quotes.document': (quoteId: string) => import('../../shared/document').QuoteDocument | null;
+
+  // ---- auth workstream adds entries below this line ----
+
+  // ---- workspace workstream adds entries below this line ----
+
+  // ---- pricing workstream adds entries below this line ----
+
+  // ---- quotes workstream adds entries below this line ----
+
+  // ---- comms workstream adds entries below this line ----
+
+  // ---- integrations workstream adds entries below this line ----
+
+  // ---- hosted workstream adds entries below this line ----
+
+  // ---- platform workstream adds entries below this line ----
 }
 
 export class Services {

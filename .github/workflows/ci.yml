@@ -21,8 +21,8 @@ jobs:
       - run: npm ci
       - name: Build gate (typecheck, lint, every test, dry-run deploy, bundle checks)
         run: npm run build
-      - name: Requirement coverage
-        run: node scripts/check-req-coverage.mjs
+      - name: Requirement coverage progress (the release workflow requires 100%)
+        run: node scripts/check-req-coverage.mjs --report
       - name: Dependency audit (high and critical fail the build, SEC-12)
         run: npm audit --omit=dev --audit-level=high
       - name: License check (no GPL or AGPL, SEC-12)

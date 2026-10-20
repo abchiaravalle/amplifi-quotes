@@ -17,7 +17,7 @@ export async function signInAs(
   const setCookie = r.headers()['set-cookie'] ?? '';
   const m = /aq_session=([^;]+)/.exec(setCookie);
   if (!m) throw new Error('no session cookie');
-  const base = new URL(process.env.BASE_URL ?? 'http://localhost:8799');
+  const base = new URL(`http://localhost:${process.env.E2E_PORT ?? 8799}`);
   await context.addCookies([
     { name: 'aq_session', value: m[1]!, domain: base.hostname, path: '/', httpOnly: true, sameSite: 'Lax' },
   ]);

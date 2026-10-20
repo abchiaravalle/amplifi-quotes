@@ -1,0 +1,31 @@
+name: release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Every in-scope requirement has a titled test
+        run: node scripts/check-req-coverage.mjs
+      - run: npm audit --omit=dev --audit-level=high
+      - run: node scripts/check-licenses.mjs
+      - run: npx playwright install --with-deps chromium webkit firefox
+      - run: npm run test:e2e
+      - name: Publish release
+        run: gh release create "$GITHUB_REF_NAME" --generate-notes
+        env:
+          GH_TOKEN: ${{ github.token }}

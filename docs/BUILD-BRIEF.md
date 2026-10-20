@@ -94,13 +94,31 @@ browser windows or sound. Playwright runs headless.
 
 ## End-to-end tests (browser)
 
+- Several builders share this machine. Always run e2e with YOUR port: `E2E_PORT=<your port> npm run test:e2e`
+  (ports are assigned in your task). Never use the default 8799.
 - `npm run test:e2e` runs Playwright (Chromium, WebKit, Firefox, plus a phone profile for files named
   `*mobile.spec.ts`) against `wrangler dev` of the real build with fresh state. Headless only.
 - Sign in from a browser test with `signInAs(request, context, role)` from `e2e/helpers.ts`. It uses
   `/api/test/sign-in`, which exists only when `E2E_SECRET` is set (never in a real deployment).
 - `npm run verify` = `npm run build` + `npm run test:e2e`. Frontend workstreams must pass `verify`.
 
+## Shared files you may append to
+
+`src/worker/services/events.ts` (EventMap), `src/worker/services/registry.ts` (ServiceMap),
+`src/worker/services/settings.ts` (SettingsShape + DEFAULT_SETTINGS), `src/worker/services/outbound.ts`
+(OUTBOUND_HOSTS) each have one marker line per workstream: `// ---- <name> workstream adds entries below
+this line ----`. Add your entries ONLY directly under YOUR marker. Don't reorder or edit other entries.
+`package.json`: add dependencies with `npm install --save-exact`; mention them in your report.
+
+Calling another module: use `ws.services.get('<name>')` for services listed in ServiceMap. If the
+providing workstream hasn't landed yet, register a fake in your test with
+`runInDurableObject(stub(), (instance) => instance.testCtx().services.provide('<name>', fake))`
+(`import { runInDurableObject } from 'cloudflare:test'`). Never import another module's files.
+
 ## Pitfalls already hit (don't repeat)
+
+- Inside workerd, `Date.now()` and `performance.now()` don't advance during synchronous code, so you
+  can't time CPU work in a worker test. Time CPU-bound code in a unit test (Node) instead.
 
 - The Worker main module (`src/worker/index.ts`) may export ONLY the default handler and the Durable
   Object classes. Any other named export makes workerd refuse to start. Shared helpers go in

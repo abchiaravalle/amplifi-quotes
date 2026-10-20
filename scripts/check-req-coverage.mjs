@@ -45,6 +45,15 @@ function walk(dir, out = []) {
   return out;
 }
 
+function walkSrc(dir, out = []) {
+  for (const e of readdirSync(dir)) {
+    const p = join(dir, e);
+    if (statSync(p).isDirectory()) walkSrc(p, out);
+    else if (/\.(ts|tsx)$/.test(e)) out.push(p);
+  }
+  return out;
+}
+
 const testText = [...walk(join(root, 'tests')), ...walk(join(root, 'e2e'))]
   .map((f) => readFileSync(f, 'utf8'))
   .join('\n');
@@ -53,12 +62,21 @@ const titled = new Set();
 for (const m of testText.matchAll(/\b(?:it|test|describe)(?:\.each\([^)]*\))?\(\s*(['"`])([\s\S]*?)\1/g)) {
   for (const id of m[2].matchAll(/\b([A-Z0-9]+-\d+)\b/g)) titled.add(id[1]);
 }
-const missing = required.filter((id) => !titled.has(id));
+let scope = required;
+if (process.argv.includes('--implemented')) {
+  // Only requirements the code claims (an ID mentioned under src/) must have a titled test.
+  const srcText = walkSrc(join(root, 'src'))
+    .map((f) => readFileSync(f, 'utf8'))
+    .join('\n');
+  scope = required.filter((id) => new RegExp(`\\b${id}\\b`).test(srcText));
+}
+const missing = scope.filter((id) => !titled.has(id));
 console.log(
-  `requirements in scope: ${required.length}, covered by a titled test: ${required.length - missing.length}`,
+  `requirements in scope: ${scope.length}, covered by a titled test: ${scope.length - missing.length}`,
 );
 if (missing.length) {
   console.error(`MISSING (${missing.length}): ${missing.join(', ')}`);
-  process.exit(1);
+  // --report prints progress without failing (main-branch CI while the build is in progress)
+  process.exit(process.argv.includes('--report') ? 0 : 1);
 }
 console.log('OK');

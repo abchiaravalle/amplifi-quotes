@@ -50,6 +50,22 @@ export interface EventMap {
   'auth.accept_code': { email: string; code: string; quoteId: string };
   'auth.reclaim_requested': { email: string; link: string };
   'usage.warning': { level: 70 | 90; metric: string; percent: number };
+
+  // ---- auth workstream adds entries below this line ----
+
+  // ---- workspace workstream adds entries below this line ----
+
+  // ---- pricing workstream adds entries below this line ----
+
+  // ---- quotes workstream adds entries below this line ----
+
+  // ---- comms workstream adds entries below this line ----
+
+  // ---- integrations workstream adds entries below this line ----
+
+  // ---- hosted workstream adds entries below this line ----
+
+  // ---- platform workstream adds entries below this line ----
 }
 
 export type EventName = keyof EventMap;

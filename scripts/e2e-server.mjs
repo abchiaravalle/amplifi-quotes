@@ -24,6 +24,8 @@ const child = spawn(
     '--local',
     '--port',
     port,
+    '--inspector-port',
+    String(Number(port) + 1000),
     '--persist-to',
     state,
     '--env-file',

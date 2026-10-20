@@ -4,7 +4,7 @@ import { defineConfig, devices } from '@playwright/test';
  * End-to-end tests (TST-5) against a local `wrangler dev` of the production build.
  * Headless only. Each run starts with fresh local state (--persist-to a temp dir).
  */
-const PORT = 8799;
+const PORT = Number(process.env.E2E_PORT ?? 8799);
 
 export default defineConfig({
   testDir: './e2e',

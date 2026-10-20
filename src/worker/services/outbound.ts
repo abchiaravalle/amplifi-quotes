@@ -68,4 +68,20 @@ export const OUTBOUND_HOSTS: { host: string; purpose: string; enabledBy: string 
   },
   { host: 'api.stripe.com', purpose: 'Pay on accept', enabledBy: 'integrations.stripe' },
   { host: '(webhook URLs you add)', purpose: 'Your webhooks', enabledBy: 'webhooks' },
+
+  // ---- auth workstream adds entries below this line ----
+
+  // ---- workspace workstream adds entries below this line ----
+
+  // ---- pricing workstream adds entries below this line ----
+
+  // ---- quotes workstream adds entries below this line ----
+
+  // ---- comms workstream adds entries below this line ----
+
+  // ---- integrations workstream adds entries below this line ----
+
+  // ---- hosted workstream adds entries below this line ----
+
+  // ---- platform workstream adds entries below this line ----
 ];
