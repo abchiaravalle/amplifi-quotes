@@ -80,6 +80,18 @@ Don't open browsers, play sound, or start apps with windows on this Mac.
   Other workstreams sign members in through `tests/worker/fixtures.ts` once it exists; until then, write
   your own local helper in your test file.
 
+## Contracts between workstreams
+
+- `docs/api/auth.md` and `docs/api/public.md` are fixed contracts. Implement or call them exactly.
+- Every backend workstream documents ITS routes in `docs/api/<module>.md` (method, path, body,
+  response, permission) as it builds them. Frontend workstreams read those files.
+- `workspace.setupComplete` = the owner account exists (gates the API, DEP-5). The setup wizard is
+  tracked by `workspace.wizardDone` and gates nothing.
+- New npm dependency: `npm install --save-exact <pkg>` in your worktree, and list it in your report.
+  Keep dependencies few. No GPL/AGPL packages.
+- Requirement coverage: `node scripts/check-req-coverage.mjs --ids=AUTH-1,AUTH-2,...` must print OK
+  for your IDs before you report done.
+
 ## Git
 
 - Work only in your worktree on your branch. Commit early and often with clear messages.

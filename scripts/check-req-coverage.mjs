@@ -10,6 +10,11 @@ import { join } from 'node:path';
 const root = new URL('..', import.meta.url).pathname;
 const arg = process.argv.find((a) => a.startsWith('--phases='));
 const phases = new Set((arg ? arg.split('=')[1] : 'P0,P1,P2,P3,P4,P5').split(','));
+// --prefixes=AUTH,DEP limits the check to IDs with those prefixes; --ids=PRC-1,PRC-2 to exact IDs
+const prefArg = process.argv.find((a) => a.startsWith('--prefixes='));
+const prefixes = prefArg ? new Set(prefArg.split('=')[1].split(',')) : null;
+const idsArg = process.argv.find((a) => a.startsWith('--ids='));
+const onlyIds = idsArg ? new Set(idsArg.split('=')[1].split(',')) : null;
 
 const spec = readFileSync(join(root, 'SPEC.md'), 'utf8');
 const rows = [...spec.matchAll(/^\| ([A-Z0-9]+-\d+) \|(.*)\|\s*$/gm)];
@@ -19,6 +24,8 @@ for (const [, id, rest] of rows) {
   const cells = rest.split('|').map((s) => s.trim());
   const phaseCell = cells[cells.length - 1] ?? '';
   const ph = [...phaseCell.matchAll(/P\d/g)].map((m) => m[0]);
+  if (prefixes && !prefixes.has(id.split('-')[0])) continue;
+  if (onlyIds && !onlyIds.has(id)) continue;
   if (ph.some((p) => phases.has(p))) required.push(id);
 }
 
